@@ -11,4 +11,9 @@ router.get('/author', function(req, res, next) {
     res.render('author');
 });
 
+// Pagina Help
+router.get('/help', function(req, res, next) {
+    res.render('help');
+});
+
 module.exports = router;
