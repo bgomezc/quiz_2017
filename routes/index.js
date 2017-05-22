@@ -13,11 +13,6 @@ router.get('/author', function(req, res, next) {
     res.render('author');
 });
 
-//Jugar
-router.get('/quizzes/random_play', function(req, res, next) {
-    res.render('random_play');
-});
-
 
 // Autoload de rutas que usen :quizId
 router.param('quizId', quizController.load);
@@ -36,4 +31,11 @@ router.get('/quizzes/:quizId(\\d+)/play',  quizController.play);
 router.get('/quizzes/:quizId(\\d+)/check', quizController.check);
 
 
+=======
+// Pagina Help
+router.get('/help', function(req, res, next) {
+    res.render('help');
+});
+
+>>>>>>> practica51
 module.exports = router;
