@@ -13,6 +13,11 @@ router.get('/author', function(req, res, next) {
     res.render('author');
 });
 
+//Jugar
+router.get('/quizzes/random_play', function(req, res, next) {
+    res.render('random_play');
+});
+
 
 // Autoload de rutas que usen :quizId
 router.param('quizId', quizController.load);
