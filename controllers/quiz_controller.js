@@ -215,8 +215,7 @@ function rQuiz(p52) {
         p52.quizzes[p52.rId].question,
         p52.quizzes[p52.rId].answer);
 }
-  
-                              
+                      
     if (req.session.p52 == null) {    
         p52 = { 'score': 0, 'result': true, 'quizzes': [], 'rId': 0 };
     } else {
@@ -267,13 +266,22 @@ exports.randomcheck = function(req, res, next) {
         p52.quizzes.splice(p52.rId, 1);      
     }
     req.session.p52 = p52;         
-    if (p52.quizzes.length) {                          
+    if (p52.quizzes.length) {  
+	if (p52.result){                        
         res.render('quizzes/random_result.ejs', {
             quiz: req.quiz,
             score: p52.score,
             answer: answer,
             result: p52.result
         });
+	}else{
+	res.render('quizzes/random_result.ejs', {
+            quiz: req.quiz,
+            score: 0,
+            answer: answer,
+            result: p52.result
+        });
+	}
     } else {
         res.render('quizzes/random_nomore.ejs', {
 	 score: p52.score
