@@ -5,7 +5,12 @@ var Sequelize = require('sequelize');
 // Autoload la pista asociado a :tipId
 exports.load = function (req, res, next, tipId) {
 
-    models.Tip.findById(tipId)
+    models.Tip.findById(tipId, {
+        include: [
+            {model: models.User, as: 'Author'}
+        ]
+    })
+
     .then(function (tip) {
         if (tip) {
             req.tip = tip;
@@ -18,6 +23,22 @@ exports.load = function (req, res, next, tipId) {
         next(error);
     });
 };
+
+
+// MW que permite acciones solamente si al usuario logeado es admin o es el autor del quiz.
+exports.adminOrAuthorRequired = function(req, res, next){
+
+    var isAdmin  = req.session.user.isAdmin;
+    var isAuthor = req.tip.AuthorId === req.session.user.id;
+
+    if (isAdmin || isAuthor) {
+        next();
+    } else {
+        console.log('Operación prohibida: El usuario logeado no es el autor del quiz, ni un administrador.');
+        res.send(403);
+    }
+};
+
 
 
 // GET /quizzes/:quizId/tips/new
