@@ -197,7 +197,7 @@ exports.randomplay = function(req, res, next) {
  
 
     var quiz;
-    var sesion;  
+    var p52;  
 
 function randomN(c){
 	var a = Math.floor(Math.random() * c);
@@ -208,47 +208,45 @@ function contenido(id, question, answer){
 	return{"id": id, "question": question, "answer": answer};
 }
 
-function rQuiz(sesion) {
-    sesion.rId = randomN(sesion.allQuiz.length);
+function rQuiz(p52) {
+    p52.rId = randomN(p52.quizzes.length);
 
-    return contenido(sesion.allQuiz[sesion.rId].id,
-        sesion.allQuiz[sesion.rId].question,
-        sesion.allQuiz[sesion.rId].answer);
+    return contenido(p52.quizzes[p52.rId].id,
+        p52.quizzes[p52.rId].question,
+        p52.quizzes[p52.rId].answer);
 }
-                                  
-    if (req.session.sesion == null) {    
-        sesion = { 'score': 0, 'result': true, 'allQuiz': [], 'rId': 0 };
+  
+                              
+    if (req.session.p52 == null) {    
+        p52 = { 'score': 0, 'result': true, 'quizzes': [], 'rId': 0 };
     } else {
-        sesion = req.session.sesion; 
+        p52 = req.session.p52; 
     }
  
-    if (!sesion.result || !sesion.allQuiz.length) { 
+    if (!p52.result || !p52.quizzes.length) { 
  
-        sesion.score = 0;                            
-        while (sesion.allQuiz.length) {              
-            sesion.allQuiz.pop();
-        }
+        p52.score = 0;                            
         models.Quiz.findAll()                           
             .then(function(b) {
                 for (var i in b) {
-                    sesion.allQuiz.push(contenido(b[i].id, b[i].question, b[i].answer)); 
+                    p52.quizzes.push(contenido(b[i].id, b[i].question, b[i].answer)); 
                 }
-                quiz = rQuiz(sesion);                
-                req.session.sesion = sesion;  
+                quiz = rQuiz(p52);                
+                req.session.p52 = p52;  
                 res.render('quizzes/random_play.ejs', {        
         		quiz: quiz,
-        		score: sesion.score,
+        		score: p52.score,
         		answer: quiz.answer
     		});           
             })
     } else {
-        quiz = rQuiz(sesion);                        
-        req.session.sesion = sesion;
+        quiz = rQuiz(p52);                        
+        req.session.p52 = p52;
         res.render('quizzes/random_play.ejs', {        
         	quiz: quiz,
-        	score: sesion.score,
+        	score: p52.score,
        		answer: quiz.answer
-    });
+    	});
     }
  
 };
@@ -257,26 +255,28 @@ function rQuiz(sesion) {
  
 exports.randomcheck = function(req, res, next) {
 
-    sesion = req.session.sesion;
+    
+    p52 = req.session.p52;
  
+    p52.score = p52.score + p52.result?1 : 0;
+
     var answer = req.query.answer || "";                   
-    sesion.result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
-    sesion.score = sesion.score + sesion.result ? 1 : 0;
-    if (sesion.result) {
-        sesion.allQuiz.splice(sesion.rId, 1);      
+    p52.result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
+    
+    if (p52.result) {
+        p52.quizzes.splice(p52.rId, 1);      
     }
-    req.session.sesion = sesion;         
-    if (sesion.allQuiz.length) {                          
- 
+    req.session.p52 = p52;         
+    if (p52.quizzes.length) {                          
         res.render('quizzes/random_result.ejs', {
             quiz: req.quiz,
-            score: sesion.score,
+            score: p52.score,
             answer: answer,
-            result: sesion.result
+            result: p52.result
         });
     } else {
         res.render('quizzes/random_nomore.ejs', {
-	 score: sesion.score
+	 score: p52.score
         });
     }
 };
