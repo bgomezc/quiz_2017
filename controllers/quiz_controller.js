@@ -187,3 +187,101 @@ exports.check = function (req, res, next) {
         answer: answer
     });
 };
+
+ 
+ 
+
+// GET /quizzes/randomplay
+ 
+exports.randomplay = function(req, res, next) {
+ 
+
+    var quiz;
+    var sesion;  
+
+function randomN(c){
+	var a = Math.floor(Math.random() * c);
+	return a;
+}
+
+function contenido(id, question, answer){
+	return{"id": id, "question": question, "answer": answer};
+}
+
+function rQuiz(sesion) {
+    sesion.rId = randomN(sesion.allQuiz.length);
+
+    return contenido(sesion.allQuiz[sesion.rId].id,
+        sesion.allQuiz[sesion.rId].question,
+        sesion.allQuiz[sesion.rId].answer);
+}
+                                  
+    if (req.session.sesion == null) {    
+        sesion = { 'score': 0, 'result': true, 'allQuiz': [], 'rId': 0 };
+    } else {
+        sesion = req.session.sesion; 
+    }
+ 
+    if (!sesion.result || !sesion.allQuiz.length) { 
+ 
+        sesion.score = 0;                            
+        while (sesion.allQuiz.length) {              
+            sesion.allQuiz.pop();
+        }
+        models.Quiz.findAll()                           
+            .then(function(b) {
+                for (var i in b) {
+                    sesion.allQuiz.push(contenido(b[i].id, b[i].question, b[i].answer)); 
+                }
+                quiz = rQuiz(sesion);                
+                req.session.sesion = sesion;  
+                res.render('quizzes/random_play.ejs', {        
+        		quiz: quiz,
+        		score: sesion.score,
+        		answer: quiz.answer
+    		});           
+            })
+    } else {
+        quiz = rQuiz(sesion);                        
+        req.session.sesion = sesion;
+        res.render('quizzes/random_play.ejs', {        
+        	quiz: quiz,
+        	score: sesion.score,
+       		answer: quiz.answer
+    });
+    }
+ 
+};
+ 
+// GET /quizzes/randomcheck
+ 
+exports.randomcheck = function(req, res, next) {
+
+    sesion = req.session.sesion;
+ 
+    var answer = req.query.answer || "";                   
+    sesion.result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
+    sesion.score = sesion.score + sesion.result ? 1 : 0;
+    if (sesion.result) {
+        sesion.allQuiz.splice(sesion.rId, 1);      
+    }
+    req.session.sesion = sesion;         
+    if (sesion.allQuiz.length) {                          
+ 
+        res.render('quizzes/random_result.ejs', {
+            quiz: req.quiz,
+            score: sesion.score,
+            answer: answer,
+            result: sesion.result
+        });
+    } else {
+        res.render('quizzes/random_nomore.ejs', {
+	 score: sesion.score
+        });
+    }
+};
+
+
+
+
+

@@ -30,12 +30,13 @@ router.delete('/quizzes/:quizId(\\d+)',    quizController.destroy);
 router.get('/quizzes/:quizId(\\d+)/play',  quizController.play);
 router.get('/quizzes/:quizId(\\d+)/check', quizController.check);
 
+router.get('/quizzes/randomplay',  quizController.randomplay);
+router.get('/quizzes/randomcheck/:quizId', quizController.randomcheck);
 
-=======
 // Pagina Help
 router.get('/help', function(req, res, next) {
     res.render('help');
 });
 
->>>>>>> practica51
+
 module.exports = router;
