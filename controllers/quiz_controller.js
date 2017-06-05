@@ -293,7 +293,6 @@ exports.randomcheck = function(req, res, next) {
         p52 = { 'score': 0, 'result': true, 'quizzes': [], 'rId': 0 };
     } else {
         p52 = req.session.p52; 
-	p52.score = p52.score + p52.result?1 : 0;
     }
 
     p52.score = p52.score + p52.result?1 : 0;
