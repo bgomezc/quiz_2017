@@ -289,13 +289,13 @@ function rQuiz(p52) {
  
 exports.randomcheck = function(req, res, next) {
 
-     if (req.session.p52 == null) {    
+    if (req.session.p52 == null) {    
         p52 = { 'score': 0, 'result': true, 'quizzes': [], 'rId': 0 };
     } else {
         p52 = req.session.p52; 
+	p52.score = p52.score + p52.result?1 : 0;
     }
- 
- 
+
     p52.score = p52.score + p52.result?1 : 0;
 
     var answer = req.query.answer || "";                   
@@ -305,10 +305,18 @@ exports.randomcheck = function(req, res, next) {
         p52.quizzes.splice(p52.rId, 1);      
     }
     req.session.p52 = p52;         
-    if (p52.quizzes.length) {  
+    if (p52.quizzes.length) {
+	if (p52.result){  
         res.render('quizzes/random_result.ejs', {
             quiz: req.quiz,
             score: p52.score,
+            answer: answer,
+            result: p52.result
+        });
+	}else{
+	res.render('quizzes/random_result.ejs', {
+            quiz: req.quiz,
+            score: 0,
             answer: answer,
             result: p52.result
         });
