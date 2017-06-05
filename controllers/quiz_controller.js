@@ -222,3 +222,109 @@ exports.check = function (req, res, next) {
         answer: answer
     });
 };
+
+ 
+ 
+
+// GET /quizzes/randomplay
+ 
+exports.randomplay = function(req, res, next) {
+ 
+
+    var quiz;
+    var p52;  
+
+function randomN(c){
+	var a = Math.floor(Math.random() * c);
+	return a;
+}
+
+function contenido(id, question, answer){
+	return{"id": id, "question": question, "answer": answer};
+}
+
+function rQuiz(p52) {
+    p52.rId = randomN(p52.quizzes.length);
+
+    return contenido(p52.quizzes[p52.rId].id,
+        p52.quizzes[p52.rId].question,
+        p52.quizzes[p52.rId].answer);
+}
+                      
+    if (req.session.p52 == null) {    
+        p52 = { 'score': 0, 'result': true, 'quizzes': [], 'rId': 0 };
+    } else {
+        p52 = req.session.p52; 
+    }
+ 
+    if (!p52.result || !p52.quizzes.length) { 
+ 
+        p52.score = 0;                            
+        models.Quiz.findAll()                           
+            .then(function(b) {
+                for (var i in b) {
+                    p52.quizzes.push(contenido(b[i].id, b[i].question, b[i].answer)); 
+                }
+                quiz = rQuiz(p52);                
+                req.session.p52 = p52;  
+                res.render('quizzes/random_play.ejs', {        
+        		quiz: quiz,
+        		score: p52.score,
+        		answer: quiz.answer
+    		});           
+            })
+    } else {
+        quiz = rQuiz(p52);                        
+        req.session.p52 = p52;
+        res.render('quizzes/random_play.ejs', {        
+        	quiz: quiz,
+        	score: p52.score,
+       		answer: quiz.answer
+    	});
+    }
+ 
+};
+ 
+// GET /quizzes/randomcheck
+ 
+exports.randomcheck = function(req, res, next) {
+
+    
+    p52 = req.session.p52;
+ 
+    p52.score = p52.score + p52.result?1 : 0;
+
+    var answer = req.query.answer || "";                   
+    p52.result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
+    
+    if (p52.result) {
+        p52.quizzes.splice(p52.rId, 1);      
+    }
+    req.session.p52 = p52;         
+    if (p52.quizzes.length) {  
+	if (p52.result){                        
+        res.render('quizzes/random_result.ejs', {
+            quiz: req.quiz,
+            score: p52.score,
+            answer: answer,
+            result: p52.result
+        });
+	}else{
+	res.render('quizzes/random_result.ejs', {
+            quiz: req.quiz,
+            score: 0,
+            answer: answer,
+            result: p52.result
+        });
+	}
+    } else {
+        res.render('quizzes/random_nomore.ejs', {
+	 score: p52.score
+        });
+    }
+};
+
+
+
+
+
