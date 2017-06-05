@@ -320,7 +320,8 @@ exports.randomcheck = function(req, res, next) {
             answer: answer,
             result: p52.result
         });
-    } else {
+	}
+    }else {
         res.render('quizzes/random_nomore.ejs', {
 	 score: p52.score
         });
