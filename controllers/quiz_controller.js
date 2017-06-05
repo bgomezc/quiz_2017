@@ -302,21 +302,12 @@ exports.randomcheck = function(req, res, next) {
     }
     req.session.p52 = p52;         
     if (p52.quizzes.length) {  
-	if (p52.result){                        
         res.render('quizzes/random_result.ejs', {
             quiz: req.quiz,
             score: p52.score,
             answer: answer,
             result: p52.result
         });
-	}else{
-	res.render('quizzes/random_result.ejs', {
-            quiz: req.quiz,
-            score: 0,
-            answer: answer,
-            result: p52.result
-        });
-	}
     } else {
         res.render('quizzes/random_nomore.ejs', {
 	 score: p52.score
