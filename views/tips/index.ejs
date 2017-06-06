@@ -11,11 +11,10 @@
 	<% var isQuizAuthor = session.user && quizAuthorId && quizAuthorId === session.user.id; %>
 	<% var isTipAuthor = session.user && tip.AuthorId && tip.AuthorId === session.user.id; %>
 
-	<%= tip.text %>
-	
-	<span id="autor"><%= tip.Author ? tip.Author.username : "Anónimo" %></span>	
+	<%= tip.text %>	
 	
 	<% if (accepted || isAdmin || isQuizAuthor ||isTipAuthor) { %>
+	<span id="autor">(<%=tip.Author ? session.user.username : "Anónimo"%>)</span>
 
 	<li>
 		
@@ -31,4 +30,5 @@
         <% } %>
            
     <% } %>
+	</li>
 </ul>
