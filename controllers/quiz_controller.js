@@ -302,8 +302,8 @@ exports.randomcheck = function(req, res, next) {
     
     if (p52.result) {
         p52.quizzes.splice(p52.rId, 1);      
-    }
-    req.session.p52 = p52;         
+    } 
+        
     if (p52.quizzes.length) {
 	if (p52.result){  
         res.render('quizzes/random_result.ejs', {

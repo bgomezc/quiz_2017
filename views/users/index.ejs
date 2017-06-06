@@ -18,7 +18,7 @@
                 </td>
             <%  } %>
 
-            <% if (session.user.isAdmin && session.user.id !== users[i].id) { %>
+            <% if (session.user.isAdmin && session.user.id === users[i].id) { %>
                 <td>
                     <a href="/users/<%= users[i].id %>?_method=DELETE"
                        onClick="return confirm('Borrar cuenta: <%= users[i].username %>');">

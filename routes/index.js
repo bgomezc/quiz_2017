@@ -67,7 +67,7 @@ router.get('/users/:userId(\\d+)',
     sessionController.loginRequired,
     userController.show);    // ver un usuario
 router.get('/users/new',
-    userController.new);     // formulario sign un
+    userController.new);     // formulario sign in
 router.post('/users',
     userController.create);  // registrar usuario
 router.get('/users/:userId(\\d+)/edit',
