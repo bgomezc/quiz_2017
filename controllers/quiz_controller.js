@@ -295,7 +295,7 @@ exports.randomcheck = function(req, res, next) {
         p52 = req.session.p52; 
     }
 
-    p52.score = p52.score + p52.result?1 : 0;
+    p52.score = p52.score + p52.result? 1 : 0;
 
     var answer = req.query.answer || "";                   
     p52.result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
@@ -305,17 +305,17 @@ exports.randomcheck = function(req, res, next) {
     } 
         
     if (p52.quizzes.length) {
-	if (p52.result){  
+	if (!p52.result){  
         res.render('quizzes/random_result.ejs', {
             quiz: req.quiz,
-            score: p52.score,
+            score: 0,
             answer: answer,
             result: p52.result
         });
 	}else{
 	res.render('quizzes/random_result.ejs', {
             quiz: req.quiz,
-            score: 0,
+            score: p52.score,
             answer: answer,
             result: p52.result
         });
